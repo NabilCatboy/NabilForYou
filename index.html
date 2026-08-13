@@ -495,7 +495,7 @@
     <div class="sukuna-modal" id="sukunaModal">
         <div class="sukuna-img-container" id="sukunaImgBox">
             <!-- Gambar 1: Sukuna tangan bentuk hati -->
-            <img id="sukunaImage" src="1000017521.jpg" alt="Sukuna Love">
+            <img id="sukunaImage" src="sukuna1.jpg" alt="Sukuna Love">
             <!-- Area tombol klik di area hati dada -->
             <div class="clickable-heart-area" id="heartClickBtn" onclick="showSukunaFlower()" title="Klik hati ini!"></div>
         </div>
@@ -713,7 +713,7 @@
         // --- Logika Transisi Sukuna ---
         function openSukunaModal() {
             gameModal.classList.remove('active');
-            sukunaImage.src = '1000017521.jpg'; // Gambar pertama Sukuna tangan love
+            sukunaImage.src = 'sukuna1.jpg'; // Gambar pertama Sukuna tangan love
             heartClickBtn.style.display = 'block';
             sukunaCaption.innerHTML = 'Click the heart on his chest! 💖';
             sukunaModal.classList.add('active');
@@ -721,7 +721,7 @@
 
         function showSukunaFlower() {
             // Berubah langsung ke gambar kedua Sukuna megang bunga
-            sukunaImage.src = '1000017522.jpg';
+            sukunaImage.src = 'sukuna2.jpg';
             // Hilangkan tombol klik area love agar tidak diklik ulang
             heartClickBtn.style.display = 'none';
             // Ubah tulisan sesuai permintaan
