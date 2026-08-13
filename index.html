@@ -509,6 +509,11 @@
         const envelope = document.getElementById('envelope');
         const hintText = document.getElementById('hintText');
         const heartContainer = document.getElementById('heartContainer');
+
+        setTimeout(() => {
+    hintText.style.opacity = '0';
+}, 20000);
+        
         const messageCard = document.getElementById('messageCard');
         const gameModal = document.getElementById('gameModal');
         const gameBoard = document.getElementById('gameBoard');
