@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejutan Ulang Tahun 💕</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: radial-gradient(circle, #2b091e 0%, #0d0208 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            perspective: 1000px;
+        }
+
+        .scene {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* --- STYLING AMPLOP --- */
+        .envelope-container {
+            position: absolute;
+            width: 260px;
+            height: 170px;
+            background: #ff4d79;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: transform 0.8s ease, opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .envelope-container:hover {
+            transform: scale(1.03);
+        }
+
+        .envelope-container.open {
+            transform: scale(1.5) translateY(150px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 130px solid transparent;
+            border-right: 130px solid transparent;
+            border-top: 100px solid #e6004c;
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            pointer-events: none;
+            z-index: 12;
+        }
+
+        .envelope-container.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+
+        .envelope-heart {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background-color: #ffffff;
+            transform: translateX(-50%) rotate(45deg);
+            z-index: 13;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+
+        .envelope-heart::before,
+        .envelope-heart::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-color: #ffffff;
+            border-radius: 50%;
+        }
+
+        .envelope-heart::before {
+            top: -20px;
+            left: 0;
+        }
+
+        .envelope-heart::after {
+            left: -20px;
+            top: 0;
+        }
+
+        .envelope-text {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            text-align: center;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            z-index: 11;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            pointer-events: none;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: -50px;
+            width: 100%;
+            text-align: center;
+            color: #ff99bb;
+            font-size: 13px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* --- STYLING PARTIKEL 3D HATI --- */
+        .heart-3d-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform: scale(0);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .heart-3d-container.active {
+            opacity: 1;
+            animation: rotateHeart 12s linear infinite;
+        }
+
+        .dot {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #ff3366;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #ff3366;
+            left: 50%;
+            top: 50%;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes rotateHeart {
+            0% {
+                transform: rotateY(0deg) rotateX(10deg);
+            }
+            100% {
+                transform: rotateY(360deg) rotateX(10deg);
+            }
+        }
+
+        /* --- STYLING KARTU PESAN CAT BOY --- */
+        .message-card {
+            position: fixed;
+            top: 50%;
+            left: 150%; 
+            transform: translate(-50%, -50%);
+            width: 320px;
+            background: rgba(30, 10, 20, 0.9);
+            border: 2px solid rgba(255, 102, 153, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 30px 25px 25px 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            color: #fff;
+            z-index: 100;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: left;
+            opacity: 0;
+            transition: left 1s cubic-bezier(0.1, 0.8, 0.3, 1), opacity 0.5s ease;
+        }
+
+        .message-card.show {
+            left: 50%; 
+            opacity: 1;
+        }
+
+        .cat-ears {
+            position: absolute;
+            top: -22px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 35px;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+
+        .ear {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 35px solid #ff4d79;
+            position: relative;
+        }
+
+        .ear::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: -10px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 20px solid #ffb3cc;
+        }
+
+        .cat-whiskers {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            opacity: 0.6;
+            letter-spacing: -2px;
+        }
+
+        .message-card p {
+            margin: 0 0 15px 0;
+        }
+
+        .signature {
+            font-weight: bold;
+            color: #ff6699;
+            display: inline-block;
+        }
+
+        .blinking-heart {
+            display: inline-block;
+            color: #ff3366;
+            font-size: 16px;
+            margin-left: 5px;
+            animation: blinkLove 1s infinite;
+        }
+
+        @keyframes blinkLove {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .game-btn {
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #ff3366, #ff6699);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .game-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* --- STYLING MINI GAME ANALOG KUCING --- */
+        .game-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 340px;
+            background: rgba(20, 5, 12, 0.95);
+            border: 2px solid #ff3366;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            z-index: 200;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        .game-modal.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .game-board {
+            position: relative;
+            width: 280px;
+            height: 160px;
+            background: #11030a;
+            border: 2px solid rgba(255, 51, 102, 0.5);
+            border-radius: 10px;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+
+        .cat-cursor {
+            position: absolute;
+            font-size: 24px;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s;
+        }
+
+        .cake-item {
+            position: absolute;
+            font-size: 24px;
+            transform: translate(-50%, -50%);
+        }
+
+        .joystick-container {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 51, 102, 0.15);
+            border: 2px solid rgba(255, 51, 102, 0.4);
+            border-radius: 50%;
+            margin: 10px auto 0 auto;
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        .joystick-thumb {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff3366, #ff6699);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 4px 10px rgba(255, 51, 102, 0.6);
+            pointer-events: none;
+            transition: background 0.2s;
+        }
+
+        /* --- STYLING MODAL SUKUNA INTERAKTIF (DILUAR FRAME AMPLOP) --- */
+        .sukuna-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 320px;
+            background: rgba(20, 5, 12, 0.98);
+            border: 2px solid #ff3366;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            z-index: 300;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.9);
+            transition: transform 0.4s cubic-bezier(0.1, 0.8, 0.3, 1);
+        }
+
+        .sukuna-modal.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .sukuna-img-container {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 51, 102, 0.4);
+            background: #000;
+        }
+
+        .sukuna-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Tombol/Area Klik Hati di Gambar Pertama Sukuna (Menyesuaikan posisi hati tengah dada) */
+        .clickable-heart-area {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px dashed #ff3366;
+            border-radius: 50%;
+            cursor: pointer;
+            animation: pulseHeartBtn 1.2s infinite ease-in-out;
+        }
+
+        .clickable-heart-area:hover {
+            background: rgba(255, 51, 102, 0.4);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        @keyframes pulseHeartBtn {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 rgba(255,51,102,0); }
+            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 15px #ff3366; }
+        }
+
+        .sukuna-caption {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff99bb;
+            line-height: 1.4;
+        }
+
+        .corner-heart {
+            position: absolute;
+            font-size: 24px;
+            opacity: 0.7;
+            animation: cornerBlink 2s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        @keyframes cornerBlink {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="corner-heart" style="top: 20px; left: 30px; animation-delay: 0s;">💕</div>
+    <div class="corner-heart" style="top: 30px; right: 40px; animation-delay: 0.5s;">💖</div>
+    <div class="corner-heart" style="bottom: 30px; left: 40px; animation-delay: 1s;">💗</div>
+    <div class="corner-heart" style="bottom: 25px; right: 35px; animation-delay: 1.5s;">💕</div>
+    <div class="corner-heart" style="top: 50%; left: 20px; animation-delay: 0.8s;">💓</div>
+    <div class="corner-heart" style="top: 45%; right: 20px; animation-delay: 1.2s;">💖</div>
+
+    <div class="scene">
+        <div class="envelope-container" id="envelope" onclick="openEnvelope()">
+            <div class="envelope-flap"></div>
+            <div class="envelope-heart"></div>
+            <div class="envelope-text">Selamat Ulang Tahun</div>
+        </div>
+        <div class="hint" id="hintText">Klik amplop untuk membuka 💌</div>
+
+        <div class="heart-3d-container" id="heartContainer"></div>
+    </div>
+
+    <!-- Kartu Pesan Cat Boy -->
+    <div class="message-card" id="messageCard">
+        <div class="cat-ears">
+            <div class="ear"></div>
+            <div class="ear"></div>
+        </div>
+        <div class="cat-whiskers">🐾 ₍ᐢ.ˬ.ᐢ₎</div>
+
+        <p>Maaf ya aku gak bisa kasih apa-apa, tapi aku mohon terima hadiah ini apa adanya. Kita beda pulau dan jauh dari 1 sama lain, tapi dari situlah kita dekat selama 1 tahun ini 🥹</p>
+        <div class="signature">#salamNabil<span class="blinking-heart">💕</span></div>
+        
+        <button class="game-btn" onclick="startAnalogGame()">🎮 Main Game Analog Kucing!</button>
+    </div>
+
+    <!-- Modal Mini Game Analog Kucing -->
+    <div class="game-modal" id="gameModal">
+        <h3>✨ Tangkap 5 Kue! ✨</h3>
+        <p style="font-size: 11px; margin: 2px 0; color: #ff99bb;">Skor: <span id="score">0</span>/5 (Geser analog di bawah)</p>
+        
+        <div class="game-board" id="gameBoard">
+            <div class="cat-cursor" id="catCursor">🐱</div>
+            <div class="cake-item" id="cakeItem">🎂</div>
+        </div>
+
+        <div class="joystick-container" id="joystick">
+            <div class="joystick-thumb" id="joystickThumb"></div>
+        </div>
+
+        <div id="gameResultContainer" style="margin-top: 8px;">
+            <button class="game-btn" onclick="closeGameModal()" style="padding: 6px;">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Sukuna Interaktif (Diluar Frame Amplop) -->
+    <div class="sukuna-modal" id="sukunaModal">
+        <div class="sukuna-img-container" id="sukunaImgBox">
+            <!-- Gambar 1: Sukuna tangan bentuk hati -->
+            <img id="sukunaImage" src="1000017521.jpg" alt="Sukuna Love">
+            <!-- Area tombol klik di area hati dada -->
+            <div class="clickable-heart-area" id="heartClickBtn" onclick="showSukunaFlower()" title="Klik hati ini!"></div>
+        </div>
+        <div class="sukuna-caption" id="sukunaCaption">
+            Klik ikon hati di bajunya ya! 💖
+        </div>
+    </div>
+
+    <script>
+        const envelope = document.getElementById('envelope');
+        const hintText = document.getElementById('hintText');
+        const heartContainer = document.getElementById('heartContainer');
+        const messageCard = document.getElementById('messageCard');
+        const gameModal = document.getElementById('gameModal');
+        const gameBoard = document.getElementById('gameBoard');
+        const scoreDisplay = document.getElementById('score');
+        const catCursor = document.getElementById('catCursor');
+        const cakeItem = document.getElementById('cakeItem');
+        const gameResultContainer = document.getElementById('gameResultContainer');
+        
+        // Elemen Sukuna Modal
+        const sukunaModal = document.getElementById('sukunaModal');
+        const sukunaImage = document.getElementById('sukunaImage');
+        const heartClickBtn = document.getElementById('heartClickBtn');
+        const sukunaCaption = document.getElementById('sukunaCaption');
+
+        const numDots = 400; 
+        let isOpened = false;
+        let score = 0;
+        
+        let catX = 140, catY = 80;
+        let cakeX = 70, cakeY = 50;
+        let moveX = 0, moveY = 0;
+        let gameInterval = null;
+        let isPlaying = false;
+
+        function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+
+            envelope.classList.add('open');
+            hintText.style.opacity = '0';
+
+            setTimeout(() => {
+                heartContainer.classList.add('active');
+                generateHeartParticles();
+            }, 400);
+
+            setTimeout(() => {
+                messageCard.classList.add('show');
+            }, 1000);
+        }
+
+        function generateHeartParticles() {
+            for (let i = 0; i < numDots; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+
+                const t = Math.PI * 2 * Math.random();
+                let hx = 16 * Math.pow(Math.sin(t), 3);
+                let hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                let hz = (Math.random() - 0.5) * 8; 
+
+                const scale = 10;
+                let targetX = hx * scale;
+                let targetY = hy * scale;
+                let targetZ = hz * scale;
+
+                let startX = (Math.random() - 0.5) * 50;
+                let startY = 50; 
+                let startZ = (Math.random() - 0.5) * 50;
+
+                dot.style.setProperty('--startX', `${startX}px`);
+                dot.style.setProperty('--startY', `${startY}px`);
+                dot.style.setProperty('--startZ', `${startZ}px`);
+                dot.style.setProperty('--targetX', `${targetX}px`);
+                dot.style.setProperty('--targetY', `${targetY}px`);
+                dot.style.setProperty('--targetZ', `${targetZ}px`);
+
+                dot.style.animation = `assembleDot 2.5s cubic-bezier(0.1, 0.8, 0.3, 1) forwards`;
+                dot.style.animationDelay = `${Math.random() * 0.5}s`;
+
+                heartContainer.appendChild(dot);
+            }
+        }
+
+        const styleSheet = document.styleSheets[0];
+        styleSheet.insertRule(`
+            @keyframes assembleDot {
+                0% {
+                    transform: translate3d(var(--startX), var(--startY), var(--startZ)) scale(0) rotate(0deg);
+                    opacity: 0;
+                }
+                50% {
+                    transform: translate3d(calc(var(--targetX) * 1.8), calc(var(--targetY) * 1.8), var(--targetZ)) scale(1.5) rotate(180deg);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: translate3d(var(--targetX), var(--targetY), var(--targetZ)) scale(1) rotate(180deg);
+                    opacity: 1;
+                }
+            }
+        `, styleSheet.cssRules.length);
+
+        // --- Logika Game Analog Kucing ---
+        function startAnalogGame() {
+            score = 0;
+            scoreDisplay.textContent = score;
+            catX = 140; catY = 80;
+            moveX = 0; moveY = 0;
+            isPlaying = true;
+            gameModal.classList.add('active');
+            spawnCake();
+            cakeItem.style.display = 'block';
+            gameResultContainer.innerHTML = '<button class="game-btn" onclick="closeGameModal()" style="padding: 6px;">Tutup</button>';
+
+            clearInterval(gameInterval);
+            gameInterval = setInterval(updateGame, 30);
+        }
+
+        function spawnCake() {
+            cakeX = Math.floor(Math.random() * 220) + 30;
+            cakeY = Math.floor(Math.rand
